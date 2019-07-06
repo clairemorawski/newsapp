@@ -4,8 +4,9 @@ $('.scrape').on('click', function() {
       method: 'GET',
       url: '/scrape'
     }).done(function(data) {
-      alert('Scraped Complete');
-      window.location = '/articles';
+      alert('Scrape Complete');
+
+      console.log(data);
     });
   });
   

@@ -1,3 +1,6 @@
+require('dotenv').config();
+// dotenv.config();
+
 //DEPENDENCIES
 var express = require('express');
 var router = express.Router();
@@ -5,7 +8,7 @@ var axios = require('axios');
 var cheerio = require('cheerio');
 
 //REQUIRE MODEL-edit
-var db = require('../models/index');
+var db = require('../models/Index');
 
 //HOME PAGE ROUTE
 router.get('/', function(req, res) {
@@ -13,34 +16,72 @@ router.get('/', function(req, res) {
 });
 
 //ROUTES
-//SCRAPE Route (Scrape WSJ site & save response in DB)
+//SCRAPE Route (Scrape Reddit Sports site & save response in DB)
 router.get('/scrape', function(req, res) {
-    axios.get('https://www.nytimes.com/').then(function(response) {
-        var $ = cheerio.load(response.data);
+//put global data calls here
+     axios.get('https://www.reddit.com/r/sports/').then(function(response) {
+        console.log(response.data);
 
-        $('article').each(function(i, element) {
-            var result = {};
-            result.title = $('element')
-            .find('h2.esl82me2')
-            .text();
-            result.link = 'https://www.nytimes.com/' + 
-            $('element')
-            .find('a')
-            .attr('href');
-            result.description = $('element')
-            .find('p.e1n8kpyg0')
-            .text();
+        // $('article').each(function(i, element) {
+        //     var result = {};
+        //     result.title = $('element')
+        //     .find("div article")
+        //     .text();
+        //     result.link = 'https://www.reddit.com/' + 
+        //     $('element')
+        //     .find('a')
+        //     .attr('href');
+        //     result.description = $('element')
+        //     .find("img")
+        //     .attr('src');
+        //     db.Article.create(result)
+        //     .then(function(dbArticle) {
+        //         console.log(dbArticle);
+        //         res.send(dbArticle);
+        //     })
+        //     .catch(function(err) {
+        //         return res.json(err);
+        //     });});
 
-            db.Article.create(result)
-            .then(function(dbArticle) {
-                console.log(dbArticle);
-            })
-            .catch(function(err) {
-                return res.json(err);
-            });
-        });
-        res.send('Scrape Complete');
+
+         // Then, we load that into cheerio and save it to $ for a shorthand selector
+         console.log(response.data);
+         var $ = cheerio.load(response.data);
+         
+
+         var genre = "sports";
+
+         // initiate an empty entry object
+         var data = {};
+
+         // For each article element with a "buckets-bottom" class
+         $("div.stream article").each(function (i, element) {
+
+             // add the title , url, content and image to the object
+             data.title = $(this).children('div.story-body').children('a').children('div.story-meta').children('h2').text().trim();
+             data.text = $(this).children('div.story-body').children('a').children('div.story-meta').children('p.summary').text().trim();
+             data.author = $(this).children('div.story-body').children('a').children('div.story-meta').children('p.byline').text().trim();
+             data.link = $(this).children('div.story-body').children('a').attr("href");
+             data.image = $(this).children('div.story-body').children('a').children('div.wide-thumb').children('img').attr('src');
+             data.genre = genre;
+
+             console.log(data);
+
+
+             var hbsObject = {
+                 articles: data
+             };
+
+             console.log(hbsObject);
+        
+             res.render("scrape-articles", hbsObject);
+
+
+         });
     });
+    res.end();
+    // Send a "Scrape Complete" message to the browser
+  res.send("Scrape Complete");
 });
 
 //GET Route (Get articlelist.handlebars with DB info)

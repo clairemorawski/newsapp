@@ -6,11 +6,11 @@ body {
   }
   
   .montse {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Rubik Mono One', sans-serif;
   }
   
   .cinzel {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Rubik Mono One', sans-serif;
   }
   
   .jumbotrom-inner {
@@ -25,4 +25,8 @@ body {
     left: 0;
     width: 100%;
     min-height: 500px;
+  }
+
+  h6 {
+    background-color: #ff4500;
   }
