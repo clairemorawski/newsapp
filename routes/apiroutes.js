@@ -20,66 +20,50 @@ router.get('/', function(req, res) {
 router.get('/scrape', function(req, res) {
 //put global data calls here
      axios.get('https://www.reddit.com/r/sports/').then(function(response) {
-        console.log(response.data);
-
-        // $('article').each(function(i, element) {
-        //     var result = {};
-        //     result.title = $('element')
-        //     .find("div article")
-        //     .text();
-        //     result.link = 'https://www.reddit.com/' + 
-        //     $('element')
-        //     .find('a')
-        //     .attr('href');
-        //     result.description = $('element')
-        //     .find("img")
-        //     .attr('src');
-        //     db.Article.create(result)
-        //     .then(function(dbArticle) {
-        //         console.log(dbArticle);
-        //         res.send(dbArticle);
-        //     })
-        //     .catch(function(err) {
-        //         return res.json(err);
-        //     });});
-
+        // console.log(response.data);
 
          // Then, we load that into cheerio and save it to $ for a shorthand selector
-         console.log(response.data);
+        //  console.log(response.data);
          var $ = cheerio.load(response.data);
          
-
-         var genre = "sports";
-
-         // initiate an empty entry object
-         var data = {};
-
          // For each article element with a "buckets-bottom" class
-         $("div.stream article").each(function (i, element) {
+         $("._1poyrkZ7g36PawDueRza-J").each(function (i, element) {
+            var result = {};
+            // result.title = $(this).children('div').children('div').children('a').children('div').find('h3._eYtD2XCVieq6emjKBH3m').text();
+            result.title = $(this).find('h3').text();
+            console.log(result.title);
 
-             // add the title , url, content and image to the object
-             data.title = $(this).children('div.story-body').children('a').children('div.story-meta').children('h2').text().trim();
-             data.text = $(this).children('div.story-body').children('a').children('div.story-meta').children('p.summary').text().trim();
-             data.author = $(this).children('div.story-body').children('a').children('div.story-meta').children('p.byline').text().trim();
-             data.link = $(this).children('div.story-body').children('a').attr("href");
-             data.image = $(this).children('div.story-body').children('a').children('div.wide-thumb').children('img').attr('src');
-             data.genre = genre;
+        //Link to article Source
+        // $(".b5szba-0 dBUWtx").each(function (i, element) {
+        //     var link = {};
+        //     link.title = $(this).find('a').text();
+        //     console.log(link.title);
+        
 
-             console.log(data);
+            
+            //  // add the title , url, content and image to the object
+            //  data.title = $(this).children('div.story-body').children('a').children('div.story-meta').children('h2').text().trim();
+            //  data.text = $(this).children('div.story-body').children('a').children('div.story-meta').children('p.summary').text().trim();
+            //  data.author = $(this).children('div.story-body').children('a').children('div.story-meta').children('p.byline').text().trim();
+            //  data.link = $(this).children('div.story-body').children('a').attr("href");
+            //  data.image = $(this).children('div.story-body').children('a').children('div.wide-thumb').children('img').attr('src');
+            //  data.genre = genre;
+
+            //  console.log(data);
 
 
              var hbsObject = {
-                 articles: data
+                 articles: result
              };
 
-             console.log(hbsObject);
+            //  console.log(hbsObject);
         
              res.render("scrape-articles", hbsObject);
 
 
          });
     });
-    res.end();
+    // res.end();
     // Send a "Scrape Complete" message to the browser
   res.send("Scrape Complete");
 });
